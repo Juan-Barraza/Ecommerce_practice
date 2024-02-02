@@ -6,6 +6,13 @@ class Product:
         self.description = description
         self.quantity = quantity
         
+    def toJson(self):
+        return {
+            "name": self.name,
+            "price": self.price,
+            "description": self.description,
+            "quiantity": self.quantity
+        }
 
     def get_name(self):
         return self.name
@@ -36,17 +43,8 @@ class Product:
         total = self.price + tax
         return total
     
-product = [
+prod = [
     {"name": "whisky", "price": 400, "description": "whisky of good quality", "quantity": 2 },
     {"name": "beer", "price": 30, "description": "beer of good quality", "quantity": 10 },
-    {"name": "water", "price": 10, "description": "whisky of good quality", "quantity": 20 }
+    {"name": "water", "price": 10, "description": "water of good quality", "quantity": 20 }
 ]
-    
-    
-    
-#my_product = Product("vino", 6550,"good quality", 2)
-#print("name: " , my_product.name)
-#print("price: " , my_product.get_price())
-#print("tax price: " , my_product.taxes())
-#print("quantity: " , my_product.get_quantity())
-#print(my_product.get_description())

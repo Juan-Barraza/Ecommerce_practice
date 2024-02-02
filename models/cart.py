@@ -6,7 +6,9 @@ from patterns.decorators import singleton
 class Cart:
     
     def __init__(self):
-        self.products = []
+        self.products = [
+            {"name": "whisky", "price": 400, "description": "whisky of good quality", "quantity": 2 }
+        ]
     
     def add(self, product: Product ):
         self.products.append(product)
@@ -22,14 +24,7 @@ class Cart:
         for product in self.products:
             total_taxes += product.taxes()
         return total_taxes
-    
-    
-#cart1 = Cart()
-#cart2 = Cart()
-#if __name__ == '__main__':
-    
-    #cart1.add(Product(name = "Whiskey", price = 50000, description = "Good quality", quantity = 2))
-    #cart2.add(Product(name = "Vino", price = 200000, description = "good", quantity = 3))
 
-    #print(cart1.products)
-    #print(cart2.products)
+products = [
+    {"name": "whisky", "price": 400, "description": "whisky of good quality", "quantity": 2 }
+]

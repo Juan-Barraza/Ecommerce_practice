@@ -1,6 +1,6 @@
 import enum
 
-from models.cart import Cart
+from models.cart import Cart, products
 from models.user import User
 from datetime import datetime
 
@@ -18,9 +18,9 @@ class Order:
         self.current_date = datetime.now()
     
     def information(self):
-        for product in self.products:
-            print("The products are: {self.products}")
-            print("The date and time: {self.current_date}")
+        for product in products:
+            print(f"The products are: {products}")
+            print(f"The date and time: {self.current_date}")
         
     def paid(self):
         total_paid = 0
