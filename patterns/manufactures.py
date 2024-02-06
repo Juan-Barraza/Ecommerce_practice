@@ -33,8 +33,8 @@ class Create_factory(ABC):
         pass
     
     def create_product(self):
-        product = self.factory_method()
-        result = product.generate()  
+        pro = self.factory_method()
+        result = pro.generate() # type: ignore
         return result
 
 
@@ -54,7 +54,3 @@ class Manufactures_c(Create_factory):
     
     def factory_method(self):
         return Product_refrigerated()
-    
-
-factory_a = Manufactures_a()
-product_a = factory_a.create_product()

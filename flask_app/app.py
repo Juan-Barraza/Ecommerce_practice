@@ -1,41 +1,65 @@
-from models.product import Product, prod
-from models.cart import Cart, products
+from models.product import Product
 from models.order import Order
 from models.user import User
-from flask import Flask, jsonify, redirect, request, url_for
+from exeptions.exceptions import *
+from flask import Flask, jsonify, request
+import sqlite3
 
 
 app = Flask(__name__)
 
-cart = Cart()
+con = sqlite3.connect("databese.db",check_same_thread=False )
+cur = con.cursor()
+res = cur.execute('SELECT * FROM "')
+print(res.fetchall())
+products = []
 
 @app.route('/products')
 def getProducts():
-    return jsonify({"product": prod})
+    res = cur.execute('SELECT * FROM "Product"')
+    result = res.fetchall()
+    for prod in result:
+        products.append({
+            "id": prod[0],
+            "name": prod[1],
+            "price": prod[2],
+            "description": prod[3],
+            "size": prod[4],
+            "color": prod[5],
+            "quantity": prod[6]
+        })
+    return jsonify({"The products are": products })
 
 @app.route('/products/<name_product>')
-def getname_product(name_product):
-    products_found = [product for product in prod if product['name'] == name_product]
-    if (len(products_found) > 0):
-        return jsonify({"product": products_found[0]})
-    return jsonify(["Product not found"])   
+def getProduct(name_product):
+    res = cur.execute(f"SELECT * FROM Product WHERE name LIKE '%{name_product}%'")   
+    result = res.fetchall()    
+    for prod in result:
+        products.append({
+            "id": prod[0],
+            "name": prod[1],
+            "price": prod[2],
+            "description": prod[3],
+            "size": prod[4],
+            "color": prod[5],
+            "quantity": prod[6]
+        })
+        return  jsonify({"The product are": products })
+    
+    return "product not faund"
 
+@app.route('/order/products/<name_product>', methods=['POST'])
+def addOrder(name_product):
 
-@app.route('/products/cart/<name_product>', methods = ['POST'])
-def addCart(name_product):
-    produc_f = [product for product in prod if product['name'] == name_product]
-    if (len(produc_f) == 0):
-        return jsonify({"mensagge": "product not found"})
-    cart.add(produc_f[0])
-    return jsonify({"New Cart": cart.products })
+    return "product not found"
 
-
+'''
 @app.route('/cart')
 def getCart():
     return jsonify({"Cart": cart.products })
 
 
-@app.route('/cart/<name_product>', methods = ['DELETE'])
+@app.route('/cart/<name_product>', methods=['DELETE'])
 def deleteCart(name_product):
     produc_c = [product for product in cart.products if product['name'] == name_product]
     if (len(produc_c) == 0):
@@ -44,10 +68,11 @@ def deleteCart(name_product):
     return jsonify({"Delete of product": cart.products })
 
 
-@app.route('/cart/products', methods = ['DELETE'])
+@app.route('/cart/products', methods=['DELETE'])
 def clearCart():
     cart.products.clear()
     return jsonify({"clean cart": cart.products })
+'''
 
 
 if  __name__ == '__main__':
