@@ -1,4 +1,4 @@
-from models.product import Product
+from models.product import Product, products
 from models.order import Order
 from models.user import User
 from exeptions.exceptions import *
@@ -10,7 +10,6 @@ app = Flask(__name__)
 
 con = sqlite3.connect("databese.db",check_same_thread=False )
 cur = con.cursor()
-products = []
 
 @app.route('/products')
 def getProducts():
@@ -42,9 +41,10 @@ def getProduct(name_product):
             "color": prod[5],
             "quantity": prod[6]
         })
+    if products:
         return  jsonify({"The product are": products })
-    
-    return  "product not faund", 404
+    else:
+        return  "product not faund", 404
 
 @app.route('/order', methods=['POST'])
 def addOrder():
@@ -61,7 +61,6 @@ def addOrder():
 
         cur.execute('SELECT * FROM "Orders" ORDER BY id DESC LIMIT 1')
         order = cur.fetchone()
-        print(order)
         for prod_id in product_ids:
             cur.execute('INSERT INTO "OrderProduct" (order_id, product_id) VALUES (?,?)', 
                         (order[0], prod_id))

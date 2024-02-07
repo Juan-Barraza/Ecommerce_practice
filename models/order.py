@@ -1,5 +1,3 @@
-import enum
-
 from models.user import User
 
 class Order:

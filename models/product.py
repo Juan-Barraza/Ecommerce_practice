@@ -52,3 +52,4 @@ class Product:
         tax = self.price * 0.19
         total = self.price + tax
         return total
+products = []
