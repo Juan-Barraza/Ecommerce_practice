@@ -36,7 +36,7 @@ def getProducts():
         })
         return jsonify({"The products are": products })
     else:
-        return "erro", 404
+        return "error", 404
     
 @app.route('/categorys')
 def getCategory():
