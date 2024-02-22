@@ -1,8 +1,8 @@
+from models import user
 from models.product import Product, products
 from models.order import Order
 from models.user import User
 from models.category import Category, categorys
-from exeptions.exceptions import *
 from flask import Flask, jsonify, request
 import sqlite3
 
@@ -36,11 +36,11 @@ def getProducts():
         })
         return jsonify({"The products are": products })
     else:
-        return "error", 404
+        return jsonify({"error"}), 404
     
 @app.route('/categorys')
 def getCategory():
-    cate= cur.execute("SELECT * FROM Category")
+    cate = cur.execute("SELECT * FROM Category")
     category = cate.fetchall()
     for cat in category:
         categorys.append({
@@ -48,12 +48,24 @@ def getCategory():
             "name": cat[1]
         })
     return jsonify({"Categorys": categorys })
+
+@app.route('/createdcategory', methods = ['POST'])
+def addCategory():
+    data = request.get_json()
+    name = data.get('name')
+    
+    cur.execute('INSERT INTO "Category" (name) VALUES (?)',(name,))
+    con.commit()
+    
+    return jsonify({"mensage": "Category created successfully"})
+    
         
     
 @app.route('/products/<name_product>')
 def getProduct(name_product):
     res = cur.execute(f"SELECT * FROM Product WHERE name LIKE '%{name_product}%'")   
     result = res.fetchall()    
+    products = []
     for prod in result:
         products.append({
             "id": prod[0],
@@ -67,58 +79,87 @@ def getProduct(name_product):
     if products:
         return  jsonify({"The product are": products })
     else:
-        return  "product not faund", 404
+        return jsonify({"message": "product not faund"}), 404
     
 
 @app.route('/order', methods=['POST'])
 def addOrder():
     data = request.get_json()
-    id_user = data.get('id_user')
-    total_price = data.get('total_price')
-    created_at = data.get('created_at')
-    product_ids = data.get('product_ids')
+        
+    required_fields = ['id_user', 'total_price', 'created_at', 'product_ids']
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Missing fields"}), 400
     try:
         
         cur.execute('INSERT INTO "Orders" (user_id, total_price, created_at) VALUES (?,?,?)', 
-                        (id_user, total_price, created_at))
+                        (data['id_user'], data['total_price'], data['created_at']))
         con.commit()
 
         cur.execute('SELECT * FROM "Orders" ORDER BY id DESC LIMIT 1')
         order = cur.fetchone()
-        for prod_id in product_ids:
+        for prod_id in data['product_ids']:
             cur.execute('INSERT INTO "OrderProduct" (order_id, product_id) VALUES (?,?)', 
                         (order[0], prod_id))
             con.commit()
 
         cur.execute('SELECT * FROM "OrderProduct" ORDER BY id DESC LIMIT 1')
         order = cur.fetchone()
-        print(order)        
-
-        return "Order inserted successfully"
         
-    finally: 
-        pass
-'''
-@app.route('/cart')
-def getCart():
-    return jsonify({"Cart": cart.products })
+        return jsonify({"message": "Order inserted successfully"}),201
+    
+    except ValueError as a:
+        return jsonify({"Error": str(a)}), 401
+        
+    except Exception as ve:
+        return jsonify({"The Order was not inserted successfully: " ,str(ve)}),500
 
 
-@app.route('/cart/<name_product>', methods=['DELETE'])
-def deleteCart(name_product):
-    produc_c = [product for product in cart.products if product['name'] == name_product]
-    if (len(produc_c) == 0):
-        return jsonify({"mensagge": "product not found"})
-    cart.delete(produc_c[0])
-    return jsonify({"Delete of product": cart.products })
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
 
+    required_fields = ['names', 'identification', 'email', 'password', 'registrationData']
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Missing fields"}), 400
 
-@app.route('/cart/products', methods=['DELETE'])
-def clearCart():
-    cart.products.clear()
-    return jsonify({"clean cart": cart.products })
-'''
+    identification = data['identification']
 
+    try:
+        cur.execute('SELECT * FROM User WHERE identification = ?', (identification,))
+        if cur.fetchone():
+            return jsonify({"error": "The user is already registered"}), 409
+        
+        cur.execute('INSERT INTO "User" (names, identification, email, password, registrationData) VALUES (?, ?, ?, ?, ?)', 
+                    (data['names'], data['identification'], data['email'], data['password'], data['registrationData']))
+        con.commit()
+        return jsonify({"message": "User created successfully"}), 201
+    except sqlite3.DatabaseError as e:
+        con.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+    
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    required_fields = ['email', 'password']
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Missing fields"}), 400
+        
+    email = data['email']
+    password = data['password']
+    try:
+        cur.execute('SELECT * FROM User WHERE email = ? AND password = ?', (email, password))
+        userData = cur.fetchone()
+        if userData:
+            return jsonify({"message": "correct start of session"}),201
+            
+        return jsonify({"Error": "failed to start"})
+            
+    except ValueError as ve:
+        return jsonify({"The password or email is incorrect": str(ve)}),401
+        
+        
 
 if  __name__ == '__main__':
     app.run(debug=True, port=5000)
