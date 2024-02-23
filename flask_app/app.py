@@ -4,15 +4,18 @@ from models.order import Order
 from models.user import User
 from models.category import Category, categorys
 from flask import Flask, jsonify, request
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 import sqlite3
 
 
 app = Flask(__name__)
-
+app.config["JWT_SECRET_KEY"] = "token-secret"
+jwt = JWTManager(app)
 con = sqlite3.connect("databese.db",check_same_thread=False )
 cur = con.cursor()
 
 @app.route('/products')
+@jwt_required()
 def getProducts():
     requested_category_id  = request.args.get('category_id')
     if requested_category_id is not None:
@@ -36,9 +39,29 @@ def getProducts():
         })
         return jsonify({"The products are": products })
     else:
-        return jsonify({"error"}), 404
+        return jsonify({"error": "Product not found"}), 404
+    
+@app.route('/createdproducts', methods = ['POST'])
+@jwt_required()
+def addProduct():
+    data = request.get_json()
+    
+    required_fields = ['category_id', 'name', 'price', 'description', 'size', 'color', 'quantity']
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Missing fields"}), 400
+    
+    try:
+        cur.execute('INSERT INTO "Product" (category_id, name, price, description, size, color, quantity) VALUES (?,?,?,?,?,?,?)', 
+                        (data['category_id'], data['name'], data['price'], data['description'], data['size'], data['color'], data['quantity']))
+        con.commit()
+        
+        return jsonify({"mensasage": "Created product successfully"}),201
+
+    except Exception as a:
+        return jsonify({"Error": str(a)}),401
     
 @app.route('/categorys')
+@jwt_required()
 def getCategory():
     cate = cur.execute("SELECT * FROM Category")
     category = cate.fetchall()
@@ -50,6 +73,7 @@ def getCategory():
     return jsonify({"Categorys": categorys })
 
 @app.route('/createdcategory', methods = ['POST'])
+@jwt_required()
 def addCategory():
     data = request.get_json()
     name = data.get('name')
@@ -57,11 +81,12 @@ def addCategory():
     cur.execute('INSERT INTO "Category" (name) VALUES (?)',(name,))
     con.commit()
     
-    return jsonify({"mensage": "Category created successfully"})
+    return jsonify({"mensage": "Category created successfully"}),201
     
         
     
 @app.route('/products/<name_product>')
+@jwt_required()
 def getProduct(name_product):
     res = cur.execute(f"SELECT * FROM Product WHERE name LIKE '%{name_product}%'")   
     result = res.fetchall()    
@@ -83,6 +108,7 @@ def getProduct(name_product):
     
 
 @app.route('/order', methods=['POST'])
+@jwt_required()
 def addOrder():
     data = request.get_json()
         
@@ -146,18 +172,32 @@ def login():
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing fields"}), 400
         
-    email = data['email']
-    password = data['password']
+    email = data.get('email', False)
+    password = data.get('password', False)
     try:
         cur.execute('SELECT * FROM User WHERE email = ? AND password = ?', (email, password))
         userData = cur.fetchone()
         if userData:
-            return jsonify({"message": "correct start of session"}),201
+            access_token = create_access_token(identity=email)
+            return jsonify(access_token=access_token),201
             
-        return jsonify({"Error": "failed to start"})
-            
+        if not email:
+            return jsonify({"Error": "missing the email"}),401
+        
+        if not password:
+            return jsonify({"Error": "missing the password"}),401
+        
+        return jsonify({"Error": "password or email incorrect"}),401
+        
     except ValueError as ve:
-        return jsonify({"The password or email is incorrect": str(ve)}),401
+        return jsonify({"Error": str(ve)}),401
+
+
+@app.route('/protegido', methods=['GET'])
+@jwt_required()
+def protegido():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
         
         
 
