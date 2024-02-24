@@ -55,10 +55,10 @@ def addProduct():
                         (data['category_id'], data['name'], data['price'], data['description'], data['size'], data['color'], data['quantity']))
         con.commit()
         
-        return jsonify({"mensasage": "Created product successfully"}),201
+        return jsonify({"mensasage": "Created product successfully"}), 201
 
     except Exception as a:
-        return jsonify({"Error": str(a)}),401
+        return jsonify({"Error": str(a)}), 401
     
 @app.route('/categorys')
 @jwt_required()
@@ -148,10 +148,8 @@ def register():
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing fields"}), 400
 
-    identification = data['identification']
-
     try:
-        cur.execute('SELECT * FROM User WHERE identification = ?', (identification,))
+        cur.execute('SELECT * FROM User WHERE identification = ?', (data['identification'],))
         if cur.fetchone():
             return jsonify({"error": "The user is already registered"}), 409
         
@@ -167,39 +165,25 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
+    body = request.get_json()
     required_fields = ['email', 'password']
-    if not all(field in data for field in required_fields):
-        return jsonify({"error": "Missing fields"}), 400
-        
-    email = data.get('email', False)
-    password = data.get('password', False)
+
+    if not all(field in body for field in required_fields):
+        return jsonify({"error": "Missing fields email and password"}), 400
+
     try:
-        cur.execute('SELECT * FROM User WHERE email = ? AND password = ?', (email, password))
+        cur.execute('SELECT * FROM User WHERE email = ? AND password = ?', (body["email"], body["password"]))
         userData = cur.fetchone()
-        if userData:
-            access_token = create_access_token(identity=email)
-            return jsonify(access_token=access_token),201
+
+        if not userData:
+            return jsonify({"message": "password or email incorrect"}), 401
             
-        if not email:
-            return jsonify({"Error": "missing the email"}),401
-        
-        if not password:
-            return jsonify({"Error": "missing the password"}),401
-        
-        return jsonify({"Error": "password or email incorrect"}),401
+        access_token = create_access_token(identity=body["email"])
+        return jsonify(access_token=access_token), 201
         
     except ValueError as ve:
-        return jsonify({"Error": str(ve)}),401
+        return jsonify({"Error": str(ve)}), 401
 
-
-@app.route('/protegido', methods=['GET'])
-@jwt_required()
-def protegido():
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
-        
-        
 
 if  __name__ == '__main__':
     app.run(debug=True, port=5000)
