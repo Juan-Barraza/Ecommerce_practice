@@ -1,4 +1,4 @@
-from models import user
+from models.user import User
 from models.product import Product, products
 from models.order import Order
 from models.user import User
@@ -20,7 +20,7 @@ def getProducts():
     requested_category_id  = request.args.get('category_id')
     if requested_category_id is not None:
         requested_category_id = int(requested_category_id)
-        result= cur.execute(f"SELECT * FROM Product WHERE category_id = {requested_category_id }").fetchall()
+        result= cur.execute(f"SELECT * FROM Product WHERE category_id = {requested_category_id}").fetchall()
         products = []
         category = cur.execute(f"SELECT * FROM Category WHERE id = {requested_category_id}").fetchone()
         for prod in result:
@@ -163,26 +163,26 @@ def register():
     
     
 
-@app.route('/login', methods=['POST'])
-def login():
-    body = request.get_json()
-    required_fields = ['email', 'password']
+#@app.route('/login', methods=['POST'])
+#def login():
+#    body = request.get_json()
+#   required_fields = ['email', 'password']
 
-    if not all(field in body for field in required_fields):
-        return jsonify({"error": "Missing fields email and password"}), 400
+#   if not all(field in body for field in required_fields):
+#        return jsonify({"error": "Missing fields email and password"}), 400
 
-    try:
-        cur.execute('SELECT * FROM User WHERE email = ? AND password = ?', (body["email"], body["password"]))
-        userData = cur.fetchone()
+#    try:
+#        cur.execute('SELECT * FROM User WHERE email = ? AND password = ?', (body["email"], body["password"]))
+#        userData = cur.fetchone()
 
-        if not userData:
-            return jsonify({"message": "password or email incorrect"}), 401
+#        if not userData:
+#            return jsonify({"message": "password or email incorrect"}), 401
             
-        access_token = create_access_token(identity=body["email"])
-        return jsonify(access_token=access_token), 201
+#        access_token = create_access_token(identity=body["email"])
+#        return jsonify(access_token=access_token), 201
         
-    except ValueError as ve:
-        return jsonify({"Error": str(ve)}), 401
+#    except ValueError as ve:
+#        return jsonify({"Error": str(ve)}), 401
 
 
 if  __name__ == '__main__':
