@@ -2,7 +2,6 @@ class UserNotExist(Exception):
     pass
 
 class ProductNotFound(Exception):
-    pass
-
+   pass
 class CategoryNotFound(Exception):
-    pass
+     pass

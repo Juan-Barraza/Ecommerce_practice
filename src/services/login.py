@@ -13,7 +13,7 @@ class Login:
         try:
             query = 'SELECT * FROM User WHERE email = ? AND password = ?'
             params = (body["email"], body["password"])
-            userData = conection.execute_query(con, query, params)
+            userData = conection.execute_query(con, query, params,fetch_all=False)
             
             if not userData:
                 raise UserNotExist("Usuario no existe") 

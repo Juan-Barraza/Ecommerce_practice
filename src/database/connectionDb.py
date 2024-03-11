@@ -1,6 +1,7 @@
 from flask import jsonify
 from sqlite3 import Error
 import sqlite3
+import json
 
 
 class ConnectionDb:
@@ -15,7 +16,7 @@ class ConnectionDb:
             return jsonify({"Error": str(e)})
     
     
-    def execute_query(self, con, query, params=None, fetch_all = False):
+    def execute_query(self, con, query, params=None, fetch_all=False):
         try:
             cur = con.cursor()
             if params:
@@ -23,25 +24,12 @@ class ConnectionDb:
             else:
                 cur.execute(query)
             con.commit()
-            if fetch_all:
-                return cur.fectchall()
+            if fetch_all is True:
+                return cur.fetchall()
             else:
-                return cur.fetchone() if cur.rowcount > 0 else None
-            
+                return cur.fetchone()
         except Error as e:
-            return jsonify({"Error": str(e)})
-
-    def fetch_all_rows(self,cur):
-        
-        try:
-            return cur.fetchall()
-        except Error as e:
-            return jsonify({"Error": str(e)})
-        
-    def fetch_one(self,cur):
-        try:
-            return cur.fetchone()
-        except Error as e:
-            return jsonify({"Error": str(e)})
+             error_message = {"Error": str(e)}
+             return json.dumps(error_message), 500 
 
 conection = ConnectionDb()

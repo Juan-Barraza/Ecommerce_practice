@@ -14,3 +14,9 @@ commit()'''
 #"DELETE FROM empleados WHERE id = ?", (id_empleado_a_eliminar,))
  #resul = cur.execute("SELECT * FROM Product WHERE id = ?", (product_id,))
   #      resul.fetchone()
+  
+  #if fetch_all:
+  #              return cur.fectchall()
+   #         else:
+    
+    #            return cur.fetchone() if cur.rowcount > 0 else None
