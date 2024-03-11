@@ -24,7 +24,7 @@ class ConnectionDb:
             else:
                 cur.execute(query)
             con.commit()
-            if fetch_all is True:
+            if fetch_all:
                 return cur.fetchall()
             else:
                 return cur.fetchone()
