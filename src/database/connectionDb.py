@@ -8,7 +8,7 @@ class ConnectionDb:
     
      def get_connection(self):
         try:
-            con = sqlite3.connect("databese.db", check_same_thread=False)
+            con = sqlite3.connect("databese.db")
             return con
         
         except Error as e:

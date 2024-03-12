@@ -7,16 +7,18 @@ produ = Blueprint('produc_blueprint', __name__)
 
 
 class ProductsView(views.MethodView):
+    
     @jwt_required()
     def get(self):
+        
         try:
             products = Product.getProducts()
 
             if not products:
                 return jsonify({"message": "Product not found" })
             
-            category = Product.getCategoryPro()
                              
+            category = Product.getCategoryPro()
             if not category:
                 return jsonify({"message": "Category not found" })
             
@@ -51,8 +53,8 @@ class ProductsView(views.MethodView):
         except ProductNotFound as error:
             return jsonify({"message": error}), 404
         
-        
-
+        except ValueError as e:
+            return jsonify({"Error": str(e)})
         
         
         

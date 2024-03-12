@@ -12,3 +12,9 @@ class DatabaseConnectionError(Exception):
  
 class DatabaseQueryError(Exception):
     pass
+
+class ExistingUser(Exception):
+     pass
+
+class ErrorCreatedUser(Exception):
+     pass 
