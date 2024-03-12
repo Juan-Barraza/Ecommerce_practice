@@ -15,14 +15,15 @@ class Product:
                 query = 'SELECT * FROM Product WHERE category_id = ?'
                 params = (requested_category_id,)
                 products_data = conection.execute_query(con, query, params, fetch_all=True)
-                print(products_data)
+
                 if not products_data:
                     raise ProductNotFound("Products not found for the given category_id")
                 
                 return products_data
-                
-        except Exception as e:
-            return e
+            
+        except ProductNotFound:
+            raise ProductNotFound("Product not found")
+            
         
     
     @classmethod
@@ -40,5 +41,5 @@ class Product:
             
             return category_data
         
-        except Exception as a:
+        except ValueError as a:
             return a

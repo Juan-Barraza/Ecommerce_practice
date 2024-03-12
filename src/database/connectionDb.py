@@ -1,22 +1,20 @@
-from flask import jsonify
 from sqlite3 import Error
 import sqlite3
-import json
+from src.utils.exceptions.exception import DatabaseConnectionError, DatabaseQueryError
 
 
 class ConnectionDb:
     
     
-    def get_connection(self):
-        
+     def get_connection(self):
         try:
             con = sqlite3.connect("databese.db", check_same_thread=False)
             return con
+        
         except Error as e:
-            return jsonify({"Error": str(e)})
+            raise DatabaseConnectionError(f"Error connecting to database: {str(e)}")
     
-    
-    def execute_query(self, con, query, params=None, fetch_all=False):
+     def execute_query(self, con, query, params=None, fetch_all=False):
         try:
             cur = con.cursor()
             if params:
@@ -28,8 +26,8 @@ class ConnectionDb:
                 return cur.fetchall()
             else:
                 return cur.fetchone()
+            
         except Error as e:
-             error_message = {"Error": str(e)}
-             return json.dumps(error_message), 500 
+            raise DatabaseQueryError(f"Error executing query: {str(e)}")
 
 conection = ConnectionDb()

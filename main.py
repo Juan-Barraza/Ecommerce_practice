@@ -1,6 +1,6 @@
 from flask import Flask
 from src.routes.routLogin import logi
-from src.routes.routproduct import prod
+from src.routes.routproduct import produ
 from src.database.connectionDb import conection
 from flask_jwt_extended import JWTManager
 
@@ -12,7 +12,7 @@ jwt = JWTManager(app)
 conection.get_connection()
 
 app.register_blueprint(logi)
-app.register_blueprint(prod)
+app.register_blueprint(produ)
 
 
 

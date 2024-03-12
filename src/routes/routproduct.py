@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required
 from src.services.product import Product
 from src.utils.exceptions.exception import CategoryNotFound, ProductNotFound
 
-prod = Blueprint('produc_blueprint', __name__)
+produ = Blueprint('produc_blueprint', __name__)
 
 
 class ProductsView(views.MethodView):
@@ -51,15 +51,13 @@ class ProductsView(views.MethodView):
         except ProductNotFound as error:
             return jsonify({"message": error}), 404
         
-        except Exception as e:
-            return jsonify({"message": str(e)}), 500
         
 
         
         
         
         
-prod.add_url_rule(
+produ.add_url_rule(
     "/products",
     view_func=ProductsView.as_view("ProductsView"),
     methods=["GET"])
