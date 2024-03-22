@@ -10,10 +10,10 @@ class Register:
         data = request.get_json()
         try:
 
-            query = 'SELECT * FROM User WHERE identification = ?'
+            query = 'SELECT * FROM "User" WHERE identification = ?'
             params = data['identification']
-            check = conection.execute_query(con, query, params)
-    
+            check = conection.execute_query(con, query, params, fetch_all=False)
+            
             return check
         
         except Exception as e:
@@ -25,12 +25,12 @@ class Register:
         data = request.get_json()
         
         try:
-
-            query = 'INSERT INTO "User" (names, identification, email, password, registrationData) VALUES (?, ?, ?, ?, ?)'
+            
+            query = 'INSERT INTO "User" names, identification, email, password, registrationData VALUES ?, ?, ?, ?, ?'
             params = data['names'], data['identification'], data['email'], data['password'], data['registrationData']
             userCreated = conection.execute_query(con, query, params)
-        
-            if(userCreated):
+
+            if not userCreated:
                 raise ErrorCreatedUser("User not created")
             
             return userCreated

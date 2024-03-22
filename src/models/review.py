@@ -9,11 +9,3 @@ class Review:
         self.rating = rating
         self.comment = comment
         self.created_at = created_at
-        
-    
-    def view(self):
-        pass
-    
-    def date(self):
-        print("dd/mm/YYYY HH:MM:S")
-    

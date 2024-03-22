@@ -8,6 +8,3 @@ class User:
         self.email = email
         self.password = password
         self.registrationDate = registrationDate
-    
-    def show(self):
-        pass

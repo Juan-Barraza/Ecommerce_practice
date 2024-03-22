@@ -10,23 +10,24 @@ class RegisterView(views.MethodView):
         
         try:
             data = request.get_json()
-            
             required_fields = ['names', 'identification', 'email', 'password', 'registrationData']
+            
             if not all(field in data for field in required_fields):
                 return jsonify({"error": "Missing fields"}), 400
             
+            
             check = Register.check()
-            
-            if(check):
-                return jsonify({"menssage": "The user already existing"}), 409
-            
-            register = Register.createdUser()
+            if check is not None:
+                return jsonify({"menssage": "The user already existing"}), 400
                  
-            if(register):
+            userCreated = Register.createdUser()
+
+            if userCreated is not None:
                 return jsonify({"menssage": "User created successfully"}), 201
         
+            
         except ErrorCreatedUser as error:
-            return jsonify({"Menssage": error}), 401
+            return jsonify({"Menssage": str(error)}), 401
         
                          
                 

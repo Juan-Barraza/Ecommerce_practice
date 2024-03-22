@@ -4,6 +4,7 @@ from src.routes.routproduct import produ
 from src.routes.routCategory import cat
 from src.routes.routsRegister import regis
 from src.database.connectionDb import conection
+from src.routes.routCreatCategory import creat
 from flask_jwt_extended import JWTManager
 
 
@@ -17,6 +18,7 @@ app.register_blueprint(logi)
 app.register_blueprint(produ)
 app.register_blueprint(cat)
 app.register_blueprint(regis)
+app.register_blueprint(creat)
 
 
 

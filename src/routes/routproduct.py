@@ -12,9 +12,10 @@ class ProductsView(views.MethodView):
     def get(self):
         
         try:
-            products = Product.getProducts()
-
-            if not products:
+            products = Product.get_products()
+            
+            
+            if products is None:
                 return jsonify({"message": "Product not found" })
             
                              
@@ -26,10 +27,9 @@ class ProductsView(views.MethodView):
                 "id": category[0] if (category and isinstance(category, (list, tuple))) else None,
                 "name": category[1] if (category and isinstance(category, (list, tuple))) else None
             }
-            
             products_list = []
-            for prod in products:
-                
+            
+            for prod in products:  
                 if isinstance(prod, (list, tuple)):
                     product_info = {
                         "id": prod[0],
@@ -45,13 +45,13 @@ class ProductsView(views.MethodView):
                 else:
                     pass
 
-            return jsonify({"The products are": products_list})
+            return jsonify({"The products are": products_list}), 200
         
         except CategoryNotFound as error:
-            return jsonify({"message": error}), 404
+            return jsonify({"message": str(error)}), 404
         
         except ProductNotFound as error:
-            return jsonify({"message": error}), 404
+            return jsonify({"message": error.to_dict}), 404
         
         except ValueError as e:
             return jsonify({"Error": str(e)})

@@ -1,6 +1,7 @@
 from sqlite3 import Error
 import sqlite3
-from src.utils.exceptions.exception import DatabaseConnectionError, DatabaseQueryError
+from flask import jsonify
+from src.utils.exceptions.exception import DatabaseConnectionError
 
 
 class ConnectionDb:
@@ -8,7 +9,7 @@ class ConnectionDb:
     
      def get_connection(self):
         try:
-            con = sqlite3.connect("databese.db")
+            con = sqlite3.connect("databese.db",check_same_thread=False)
             return con
         
         except Error as e:
@@ -17,8 +18,9 @@ class ConnectionDb:
      def execute_query(self, con, query, params=None, fetch_all=False):
         try:
             cur = con.cursor()
+
             if params:
-                cur.execute(query, params)
+                cur.execute(query, params,)
             else:
                 cur.execute(query)
             con.commit()
@@ -26,8 +28,7 @@ class ConnectionDb:
                 return cur.fetchall()
             else:
                 return cur.fetchone()
-            
         except Error as e:
-            raise DatabaseQueryError(f"Error executing query: {str(e)}")
+            return jsonify({"Error": str(e)})
 
 conection = ConnectionDb()

@@ -5,6 +5,8 @@ from src.utils.exceptions.exception import UserNotExist
 
 class Login:
     
+    con = None
+    
     @classmethod
     def loginUser(cls):
         con = conection.get_connection()
@@ -12,16 +14,18 @@ class Login:
 
         try:
             query = 'SELECT * FROM User WHERE email = ? AND password = ?'
-            params = (body["email"], body["password"])
-            userData = conection.execute_query(con, query, params,fetch_all=False)
+            params = (body['email'], body['password'])
+            userData = conection.execute_query(con, query, params)
             
             if not userData:
-                raise UserNotExist("Usuario no existe") 
+                raise UserNotExist("The User does not exist") 
             
             return userData
             
-        except ValueError as ve:
-            return ve
+        except KeyError as e:
+            return e
+        
+        
 
         
             

@@ -6,23 +6,24 @@ from src.utils.exceptions.exception import ProductNotFound, CategoryNotFound
 class Product:
     
     @classmethod
-    def getProducts(cls):
+    def get_products(cls):
         requested_category_id  = request.args.get('category_id')
         con = conection.get_connection()
         
         try:
             if requested_category_id is not None:
-                query = 'SELECT * FROM Product WHERE category_id = ?'
+                requested_category_id = int(requested_category_id)
+                query = 'SELECT * FROM "Product" WHERE category_id = ?'
                 params = (requested_category_id,)
                 products_data = conection.execute_query(con, query, params, fetch_all=True)
-
+                
                 if not products_data:
                     raise ProductNotFound("Products not found for the given category_id")
                 
                 return products_data
             
-        except ProductNotFound:
-            raise ProductNotFound("Product not found")
+        except ValueError:
+            raise
             
         
     

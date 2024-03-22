@@ -11,5 +11,3 @@ class Product:
         self.size = size
         self.color = color
         self.quantity = quantity
-        
-products = []
