@@ -11,8 +11,8 @@ class Category:
             query = 'SELECT * FROM Category'
             categ = conection.execute_query(con, query, fetch_all=True)
             print(categ)
-            if(not categ):
-                raise CategoryNotFound("Category dnot found")
+            if not categ:
+                raise CategoryNotFound("Category not found")
             
             return categ
         

@@ -17,14 +17,14 @@ class CategorysView(views.MethodView):
             if(not category):
                 return jsonify({"mensaage": "Category not found"})
             
-            categorys = []
-            
-            for cat in category:
-                infoCategory = {
-                "id": cat[0],
-                "name": cat[1]
-                }
-                categorys.append(infoCategory)
+            if isinstance(category, (list, tuple, dict)) and category:
+                categorys = []
+                for cat in category:
+                    infoCategory = {
+                    "id": cat[0],
+                    "name": cat[1]
+                    }
+                    categorys.append(infoCategory)
                 
             return jsonify({"Categorys": categorys })
         

@@ -5,6 +5,7 @@ from src.routes.routCategory import cat
 from src.routes.routsRegister import regis
 from src.routes.routCreatCategory import creat
 from src.routes.routCreaProd import creatpro
+from src.routes.routSerchPro import serch
 
 mainBlu = Blueprint('main', __name__)
 
@@ -14,3 +15,4 @@ mainBlu.register_blueprint(cat)
 mainBlu.register_blueprint(regis)
 mainBlu.register_blueprint(creat)
 mainBlu.register_blueprint(creatpro)
+mainBlu.register_blueprint(serch)

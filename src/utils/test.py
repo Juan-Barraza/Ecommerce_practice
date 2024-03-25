@@ -20,3 +20,5 @@ commit()'''
    #         else:
     
     #            return cur.fetchone() if cur.rowcount > 0 else None
+    
+#'SELECT * FROM "Product" WHERE name LIKE ? '

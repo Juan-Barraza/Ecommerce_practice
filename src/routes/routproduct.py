@@ -28,9 +28,8 @@ class ProductsView(views.MethodView):
                 "name": category[1] if (category and isinstance(category, (list, tuple))) else None
             }
             products_list = []
-            
-            for prod in products:  
-                if isinstance(prod, (list, tuple)):
+            if isinstance(products, (list, tuple, dict)) and products:
+                for prod in products:  
                     product_info = {
                         "id": prod[0],
                         "category": infoCategory,
