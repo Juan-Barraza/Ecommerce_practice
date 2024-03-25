@@ -13,8 +13,10 @@ class LoginView(views.MethodView):
         required_fields = ['email','password']
         
 
-        if not all(field in body for field in required_fields):
-            return jsonify({"error": "Missing fields email and password"}), 400
+        
+        if not all(field in body and body[field] for field in required_fields):
+            return jsonify({"error": "Missing or empty fields email and password"}), 400
+
         
         try:
             user = Login.loginUser()
@@ -23,6 +25,7 @@ class LoginView(views.MethodView):
 
             access_token = create_access_token(identity=body['email'])
             return jsonify(access_token=access_token), 201
+        
         except UserNotExist as error:
             return jsonify({"message": str(error)}), 404
 

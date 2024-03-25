@@ -30,17 +30,6 @@ def addProduct():
         return jsonify({"Error": str(a)}), 401
     
 
-
-@app.route('/createdcategory', methods = ['POST'])
-@jwt_required()
-def addCategory():
-    data = request.get_json()
-    name = data.get('name')
-    
-    cur.execute('INSERT INTO "Category" (name) VALUES (?)',(name,))
-    con.commit()
-    
-    return jsonify({"mensage": "Category created successfully"}),201
     
         
     

@@ -1,7 +1,6 @@
+import sqlite3
 from flask import request
 from src.database.connectionDb import conection
-from src.utils.exceptions.exception import ErrorCreatedCategory
-
 
 
 class CreatCategory:
@@ -11,39 +10,34 @@ class CreatCategory:
     def check(cls):
         con = conection.get_connection()
         data = request.get_json()
-        name = data.get('name')
+
 
         try:
             
             query = 'SELECT * FROM "Category" WHERE name = ?'
-            params = (name,)
-            comp = conection.execute_query(con, query, params,)
+            params = (data['name'],)
+            comp = conection.execute_query(con, query, params)
             
-            if (name,) == comp:
-                return True
-            
-            return False
+            return comp
         
-        except ValueError as e:
+            
+        
+        except sqlite3.Error as e:
             return e
     
     
     @classmethod
-    def createdCategory(cls):
+    def createdCategory(cls, name):
         con = conection.get_connection()
-        data = request.get_json()
-        name = data.get('name')
+        
         try:
          
             query = 'INSERT INTO "Category" (name) VALUES (?)'
             params = (name,)
-            created = conection.execute_query(con, query, params)
+            crea = conection.execute_query(con, query, params)
             
-            if not created:
-                raise ErrorCreatedCategory(" not created")
-            
-            return created
+            return crea
             
     
-        except ValueError as e:
+        except sqlite3.Error as e:
             return e

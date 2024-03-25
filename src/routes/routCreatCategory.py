@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request, views
 from flask_jwt_extended import jwt_required
 from src.services.createdCat import CreatCategory
-from src.utils.exceptions.exception import ErrorCreatedCategory
 
 creat = Blueprint('created_cat_blueprint', __name__)
 
@@ -12,29 +11,24 @@ class CreatedCatView(views.MethodView):
         
         try:
             data = request.get_json()
-            required_fields = ['name']
+            name = ['name']
             
-            if not all(field in data for field in required_fields):
+            if not all(field in data and data[field] for field in name):
                 return jsonify({"error": "Missing fields"}), 400
             
             exist = CreatCategory.check()
-            
-            if exist:
+            if exist is not None:
                 return jsonify({"mensage":"Category already exists"}), 409
             
             
-            created = CreatCategory.createdCategory()
-            
-            if not created:
-                return jsonify({"Error": "Create category failed"}), 401
+            created = CreatCategory.createdCategory(data['name'])
+            if created is not None:
+                return jsonify({"Error": "Category not created"}), 401
             
 
-            return jsonify({"mensage": "Category created successfully"}), 201
+            return jsonify({"mensage": "successfully created category "}), 201
             
             
-        except ErrorCreatedCategory as error:
-            return jsonify({"mensage": str(error)})
-        
         except ValueError as e:
             return jsonify({"Error": str(e)})
         

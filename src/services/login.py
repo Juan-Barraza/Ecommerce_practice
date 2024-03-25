@@ -17,7 +17,7 @@ class Login:
             params = (body['email'], body['password'])
             userData = conection.execute_query(con, query, params)
             
-            if not userData:
+            if userData is None:
                 raise UserNotExist("The User does not exist") 
             
             return userData
