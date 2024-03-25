@@ -7,6 +7,7 @@ serch = Blueprint('search_blueprint', __name__)
 
 class SearchProductView(views.MethodView):
     
+    @jwt_required()
     def get(self):
         
         try:

@@ -1,5 +1,5 @@
 from flask import Flask
-from src.blueprints.blueprints import mainBlu
+from src import mainBlu
 from src.database.connectionDb import conection
 from flask_jwt_extended import JWTManager
 

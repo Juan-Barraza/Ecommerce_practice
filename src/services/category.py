@@ -10,7 +10,7 @@ class Category:
         try:
             query = 'SELECT * FROM Category'
             categ = conection.execute_query(con, query, fetch_all=True)
-            print(categ)
+            
             if not categ:
                 raise CategoryNotFound("Category not found")
             
