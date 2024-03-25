@@ -9,29 +9,7 @@ jwt = JWTManager(app)
 con = sqlite3.connect("databese.db",check_same_thread=False )
 cur = con.cursor()
 
-    
-@app.route('/createdproducts', methods = ['POST'])
-@jwt_required()
-def addProduct():
-    data = request.get_json()
-    
-    required_fields = ['category_id', 'name', 'price', 'description', 'size', 'color', 'quantity']
-    if not all(field in data for field in required_fields):
-        return jsonify({"error": "Missing fields"}), 400
-    
-    try:
-        cur.execute('INSERT INTO "Product" (category_id, name, price, description, size, color, quantity) VALUES (?,?,?,?,?,?,?)', 
-                        (data['category_id'], data['name'], data['price'], data['description'], data['size'], data['color'], data['quantity']))
-        con.commit()
-        
-        return jsonify({"mensasage": "Created product successfully"}), 201
-
-    except Exception as a:
-        return jsonify({"Error": str(a)}), 401
-    
-
-    
-        
+         
     
 @app.route('/products/<name_product>')
 @jwt_required()
