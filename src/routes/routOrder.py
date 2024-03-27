@@ -8,7 +8,7 @@ order = Blueprint('order_blueprint', __name__)
 
 class OrderView(views.MethodView):
     
-    
+    @jwt_required()
     def post(self):
         
         try:
