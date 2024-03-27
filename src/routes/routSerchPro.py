@@ -16,7 +16,7 @@ class SearchProductView(views.MethodView):
             if search is None:
                 return jsonify({"mensaage": "Product not found"}), 404
             
-            print(search)
+            
             products = []
             if isinstance(search, (list, tuple, dict)) and search:
                 for prod in search:

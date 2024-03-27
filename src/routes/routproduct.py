@@ -23,10 +23,13 @@ class ProductsView(views.MethodView):
             if not category:
                 return jsonify({"message": "Category not found" })
             
-            infoCategory = {
-                "id": category[0] if (category and isinstance(category, (list, tuple))) else None,
-                "name": category[1] if (category and isinstance(category, (list, tuple))) else None
-            }
+            if isinstance(category, (list, tuple, dict)) and category:
+                infoCategory = {
+                    "id": category[0],
+                    "name": category[1]
+                    }
+                
+            
             products_list = []
             if isinstance(products, (list, tuple, dict)) and products:
                 for prod in products:  

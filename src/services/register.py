@@ -12,7 +12,7 @@ class Register:
             query = 'SELECT * FROM "User" WHERE identification = ?'
             params = (data['identification'],)
             check = conection.execute_query(con, query, params)
-            print(check)
+            
             return check
         
         except Exception as e:
@@ -29,7 +29,6 @@ class Register:
             params = (data['names'], data['identification'], data['email'], data['password'], data['registrationData'])
             userCreated = conection.execute_query(con, query, params)
 
-            print(userCreated)
             return userCreated
             
         except Exception as e:

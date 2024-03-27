@@ -11,7 +11,7 @@ class CreatedProduct:
             query = 'INSERT INTO "Product" (category_id, name, price, description, size, color, quantity) VALUES (?,?,?,?,?,?,?)'
             params = (data['category_id'], data['name'], data['price'], data['description'], data['size'], data['color'], data['quantity'])
             created = conection.execute_query(con, query, params)
-            print(created)
+           
             return created
 
         except Exception as a:
